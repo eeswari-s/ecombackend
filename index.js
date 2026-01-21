@@ -1,14 +1,23 @@
+// ==============================
 // Load environment variables
+// ==============================
 import "dotenv/config";
 
+// ==============================
 // Core imports
+// ==============================
 import express from "express";
 import cors from "cors";
+import https from "https";
 
+// ==============================
 // Database
+// ==============================
 import connectDatabase from "./Config/Database.js";
 
+// ==============================
 // Routes
+// ==============================
 import authRoutes from "./Routes/AuthRoutes.js";
 import adminAuthRoutes from "./Routes/AdminAuthRoutes.js";
 
@@ -96,4 +105,23 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log("📦 Dress Shop Backend is LIVE");
   console.log("======================================");
+
+  // ==============================
+  // SERVER WAKE-UP / KEEP-ALIVE
+  // ==============================
+  if (process.env.NODE_ENV === "production") {
+    const url = process.env.SERVER_URL; // eg: https://yourapp.onrender.com
+
+    if (url) {
+      setInterval(() => {
+        https
+          .get(url, (res) => {
+            console.log("🔁 Server wake-up ping sent");
+          })
+          .on("error", (err) => {
+            console.error("Wake-up ping failed:", err.message);
+          });
+      }, 1000 * 60 * 5); // every 5 minutes
+    }
+  }
 });
