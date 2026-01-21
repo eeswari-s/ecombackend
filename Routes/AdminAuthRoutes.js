@@ -1,0 +1,12 @@
+import express from "express";
+import {
+  registerAdmin,
+  loginAdmin
+} from "../Controllers/AdminAuthController.js";
+
+const router = express.Router();
+
+router.post("/register", registerAdmin);
+router.post("/login", loginAdmin);
+
+export default router;
