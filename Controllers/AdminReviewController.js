@@ -85,3 +85,27 @@ export const deleteReview = async (req, res) => {
     });
   }
 };
+
+
+/**
+ * GET ALL REVIEWS (ADMIN)
+ */
+export const getAllReviewsForAdmin = async (req, res) => {
+  try {
+    const reviews = await Review.find()
+      .populate("user", "name email")
+      .populate("product", "name")
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      count: reviews.length,
+      reviews
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};

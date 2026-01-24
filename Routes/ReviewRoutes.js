@@ -1,7 +1,8 @@
 import express from "express";
 import {
   addReview,
-  getProductReviews
+  getProductReviews,
+ 
 } from "../Controllers/ReviewController.js";
 import verifyToken from "../Middlewares/VerifyToken.js";
 import isUser from "../Middlewares/IsUser.js";
@@ -13,5 +14,7 @@ router.post("/", verifyToken, isUser, addReview);
 
 // Public product reviews
 router.get("/product/:productId", getProductReviews);
+
+
 
 export default router;
