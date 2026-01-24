@@ -48,15 +48,29 @@ connectDatabase();
 // ==============================
 // Global Middlewares
 // ==============================
+const allowedOrigins = [
+  "https://thisisfinal-beige.vercel.app",
+  "http://localhost:5173",
+  "http://localhost:3000"
+];
+
 app.use(
   cors({
-    origin: "https://thisisfinal-beige.vercel.app/",
+    origin: function (origin, callback) {
+      // allow requests with no origin (like Postman)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"]
   })
 );
-
 app.use(express.json());
 
 // ==============================
