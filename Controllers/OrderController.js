@@ -84,19 +84,21 @@ export const createOrder = async (req, res) => {
     });
 
     // =========================
-    // PDF + EMAIL (NON-BLOCKING)
-    // =========================
-    try {
-      const user = await User.findById(userId);
+// PDF + EMAIL (BLOCKING & RELIABLE)
+// =========================
+const user = await User.findById(userId);
 
-      if (user) {
-        const pdfBuffer = await generateInvoicePdf(order, user);
-        await sendOrderEmail(user.email, order, pdfBuffer);
-      }
-    } catch (emailError) {
-      console.error("Invoice email failed:", emailError.message);
-      // IMPORTANT: Do NOT throw error
-    }
+if (user) {
+  try {
+    console.log("MAIL START");
+    const pdfBuffer = await generateInvoicePdf(order, user);
+    await sendOrderEmail(user.email, order, pdfBuffer);
+    console.log("MAIL END");
+  } catch (emailError) {
+    console.error("Invoice email failed:", emailError.message);
+    // ❗ DO NOT throw error – order must still succeed
+  }
+}
 
     // =========================
     // CLEAR CART
