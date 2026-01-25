@@ -1,25 +1,11 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
-/**
- * Send Order Confirmation Email with PDF Attachment
- * @param {string} toEmail
- * @param {Object} order
- * @param {Buffer} pdfBuffer
- */
+const resend = new Resend(process.env.RESEND_API_KEY);
+
 const sendOrderEmail = async (toEmail, order, pdfBuffer) => {
   try {
-    const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: process.env.EMAIL_PORT,
-      secure: false,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      }
-    });
-
-    const mailOptions = {
-      from: process.env.EMAIL_FROM,
+    await resend.emails.send({
+      from: "JustBuy <onboarding@resend.dev>",
       to: toEmail,
       subject: `Order Confirmation - ${order._id}`,
       html: `
@@ -32,18 +18,17 @@ const sendOrderEmail = async (toEmail, order, pdfBuffer) => {
         <br/>
         <p>Regards,<br/>Dress Shop Team</p>
       `,
-      attachments: [
-        {
-          filename: `Invoice-${order._id}.pdf`,
-          content: pdfBuffer
-        }
-      ]
-    };
-
-    await transporter.sendMail(mailOptions);
+      attachments: pdfBuffer
+        ? [
+            {
+              filename: `Invoice-${order._id}.pdf`,
+              content: pdfBuffer.toString("base64"),
+            },
+          ]
+        : [],
+    });
   } catch (error) {
     console.error("Email sending failed:", error.message);
-    throw error;
   }
 };
 
