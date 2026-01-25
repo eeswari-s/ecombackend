@@ -66,7 +66,7 @@ export const createOrder = async (req, res) => {
       await product.save();
     }
 
-    // =========================
+   // =========================
     // CREATE ORDER
     // =========================
     const order = await Order.create({
@@ -86,19 +86,16 @@ export const createOrder = async (req, res) => {
     // =========================
     // PDF + EMAIL (NON-BLOCKING)
     // =========================
-    // =========================
-    // PDF + EMAIL (RELIABLE)
-    // =========================
     try {
-      console.log("📧 MAIL START");
+      const user = await User.findById(userId);
 
-      const pdfBuffer = await generateInvoicePdf(order, user);
-      await sendOrderEmail(user.email, order, pdfBuffer);
-
-      console.log("📧 MAIL END");
+      if (user) {
+        const pdfBuffer = await generateInvoicePdf(order, user);
+        await sendOrderEmail(user.email, order, pdfBuffer);
+      }
     } catch (emailError) {
-      console.error("❌ Invoice email failed:", emailError.message);
-      // ❗ Do NOT throw – order must still succeed
+      console.error("Invoice email failed:", emailError.message);
+      // ❌ DO NOT throw — order must succeed
     }
 
     // =========================
