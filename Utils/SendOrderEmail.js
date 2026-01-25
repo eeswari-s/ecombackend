@@ -1,11 +1,11 @@
 import { Resend } from "resend";
-
+console.log("RESEND KEY:", process.env.RESEND_API_KEY);
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendOrderEmail = async (toEmail, order, pdfBuffer) => {
   try {
     await resend.emails.send({
-      from: "JustBuy <onboarding@resend.dev>",
+      from: "onboarding@resend.dev",
       to: toEmail,
       subject: `Order Confirmation - ${order._id}`,
       html: `
