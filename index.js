@@ -51,7 +51,7 @@ connectDatabase();
 const allowedOrigins = [
    "https://thisisfinal-glva.vercel.app",
   "https://thisisfinal-beige.vercel.app",
-  "http://localhost:5173",
+  "http://localhost:5174",
   "http://localhost:3000"
 ];
 
